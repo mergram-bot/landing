@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MerGram - A Telegram bot that automatically detects and renders Mermaid diagrams in group conversations. Visualize technical discussions instantly.">
+    <title>MerGram | Mermaid Diagrams for Telegram</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+        :root {
+            --tg-blue: #2CA5E0;
+            --mermaid-pink: #FF3670;
+            --bg-dark: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            scroll-behavior: smooth;
+        }
+
+        .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--tg-blue), var(--mermaid-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--tg-blue), #1d89c4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(44, 165, 224, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-pattern {
+            background-image: url('assets/hero-bg.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .hero-pattern::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent, var(--bg-dark));
+        }
+
+        .mermaid-preview svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Telegram Mockup Styles */
+        .chat-bubble {
+            max-width: 85%;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .chat-bubble-received {
+            background: #1e293b;
+            align-self: flex-start;
+        }
+
+        .chat-bubble-sent {
+            background: #2b5278;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+
+<body class="overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 glass-card">
+        <nav class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img src="assets/logo.jpg" alt="MerGram Logo" class="w-8 h-8 rounded-full">
+                <span class="text-xl font-bold tracking-tight">MerGram</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#features" class="hover:text-sky-400 transition">Features</a>
+                <a href="#how-it-works" class="hover:text-sky-400 transition">How it Works</a>
+                <a href="#getting-started" class="hover:text-sky-400 transition">Docs</a>
+                <a href="https://github.com/capcom6/mergram-tg-bot" target="_blank" rel="noopener noreferrer"
+                    class="hover:text-sky-400 transition">GitHub</a>
+            </div>
+            <a href="https://t.me/MerGramBot" rel="noopener noreferrer" target="_blank"
+                class="btn-primary px-5 py-2 rounded-full text-sm font-semibold">
+                Try Bot
+            </a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-pattern pt-32 pb-20 px-4">
+        <div class="relative max-w-7xl mx-auto text-center">
+            <div class="mb-6 inline-block">
+                <span
+                    class="bg-sky-500/10 text-sky-400 text-xs font-bold px-3 py-1 rounded-full border border-sky-500/20 uppercase tracking-widest">
+                    Available Now on Telegram
+                </span>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6">
+                Visualize Technical <br />
+                <span class="gradient-text">Discussions Instantly</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+                A Telegram bot that automatically detects Mermaid diagram syntax in group conversations and renders them
+                as beautiful images.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://t.me/MerGramBot" target="_blank" rel="noopener noreferrer"
+                    class="btn-primary w-full sm:w-auto px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center">
+                    <i class="fab fa-telegram-plane mr-2"></i> Add to Telegram
+                </a>
+                <a href="https://github.com/capcom6/mergram-tg-bot" target="_blank" rel="noopener noreferrer"
+                    class="w-full sm:w-auto glass-card px-8 py-4 rounded-xl font-bold text-lg flex items-center justify-center hover:bg-slate-800 transition">
+                    <i class="fab fa-github mr-2"></i> View Source
+                </a>
+            </div>
+        </div>
+
+        <div class="max-w-5xl mx-auto mt-20">
+            <img src="assets/banner.jpg" alt="MerGram Showcase" class="rounded-2xl shadow-2xl border border-white/10">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-4 bg-slate-900/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Key Features</h2>
+                <div class="h-1 w-20 bg-sky-500 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 bg-sky-500/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-search text-sky-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">🔍 Auto-Detection</h3>
+                    <p class="text-gray-400">MerGram monitors group messages for Mermaid code blocks and automatically
+                        triggers rendering without user input.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 bg-pink-500/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-bolt text-pink-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">⚡ Smart Rendering</h3>
+                    <p class="text-gray-400">High-speed rendering powered by the <a href="https://mermaid.ink"
+                            target="_blank" rel="noopener noreferrer" class="text-pink-400 underline">mermaid.ink</a>
+                        service. Delivers crisp PNG
+                        diagrams directly in your chat flow.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="glass-card p-8 rounded-2xl">
+                    <div class="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-emerald-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">🔒 Privacy-Focused</h3>
+                    <p class="text-gray-400">We don't store your messages. Diagrams are processed via mermaid.ink;
+                        ensure your diagram data doesn't contain sensitive information.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Playground -->
+    <section class="py-24 px-4 bg-slate-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-4xl font-bold mb-6 leading-tight">See it in <br /><span
+                            class="text-pink-500">Action</span></h2>
+                    <p class="text-gray-400 mb-8 text-lg">
+                        Technical teams often share architecture designs, but recipients have to copy-paste code into a
+                        browser. MerGram removes this friction.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-sky-500/20 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-sky-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Better Collaboration</h4>
+                                <p class="text-sm text-gray-500">Discuss architecture without leaving your Telegram app.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div
+                                class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check text-pink-400"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Rich Diagram Support</h4>
+                                <p class="text-sm text-gray-500">Flowcharts, Sequence, Gantt, Class diagrams and more.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">Interactive
+                            Sandbox</span>
+                        <div class="flex space-x-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                        </div>
+                    </div>
+                    <textarea id="mermaid-input"
+                        class="w-full bg-slate-900 border border-white/10 rounded-xl p-4 font-mono text-sm h-48 focus:ring-2 focus:ring-sky-500 focus:outline-none transition"
+                        spellcheck="false">graph TD
+    A[Client] --> B[Load Balancer]
+    B --> C[Server 1]
+    B --> D[Server 2]
+    C --> E[Database]
+    D --> E</textarea>
+                    <div id="mermaid-output"
+                        class="mt-6 p-6 bg-white rounded-xl flex justify-center items-center min-h-[200px] mermaid-preview overflow-hidden">
+                        <!-- Mermaid SVG will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Usage Section -->
+    <section id="how-it-works" class="py-24 px-4 bg-slate-900">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">How to Use</h2>
+
+            <!-- Telegram Chat Mockup -->
+            <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-white/10 mb-16">
+                <div class="bg-[#17212b] p-4 flex items-center border-b border-white/5">
+                    <div
+                        class="w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center font-bold text-white mr-4">
+                        M</div>
+                    <div>
+                        <div class="font-bold">Dev Team Group</div>
+                        <div class="text-xs text-sky-400">MerGram Bot is online</div>
+                    </div>
+                </div>
+                <div class="bg-[#0e1621] p-6 flex flex-col space-y-4">
+                    <div class="chat-bubble chat-bubble-received">
+                        <div class="text-sky-400 text-xs font-bold mb-1">Alex</div>
+                        <div class="text-sm">Check out the new workflow:</div>
+                        <div class="bg-black/40 p-3 rounded-lg mt-2 font-mono text-xs text-sky-300">
+                            ```mermaid<br>
+                            graph LR<br>
+                            &nbsp;&nbsp;Start --> Process --> End<br>
+                            ```
+                        </div>
+                    </div>
+
+                    <div class="chat-bubble chat-bubble-received">
+                        <div class="text-pink-400 text-xs font-bold mb-1">MerGram Bot <span
+                                class="bg-pink-500/10 text-[10px] px-1 rounded ml-1">BOT</span></div>
+                        <div class="bg-white/90 p-2 rounded-lg">
+                            <img src="https://mermaid.ink/img/pako:eNpFj7EKwjAYhF8l_HNa0tqkMYOLuimIbuISTGwLNilpAmrpuxsj4nYfd9xxE1yt0iCgcXJo0e54MQidvHQeZdkKHZy96nFMemsU4JjrFAjvgsbQa9fLD8I0R2uQ5mxt_3OdDU0L4ibvY6QwKOn1ppNx6B_RRmm3tsF4ECVLFSAmeESidU4oJQtaEMIoKTE8QVQ8Z8uiYrTkhNZFwWcMr7RJcl5TDFp13rr991O6Nr8BxiJE8w"
+                                alt="Rendered Diagram" class="max-w-full">
+                        </div>
+                        <div class="text-[10px] text-gray-500 mt-1">Rendered with mermaid.ink</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <span
+                            class="w-8 h-8 rounded-full bg-sky-500 flex items-center justify-center text-sm mr-3">1</span>
+                        Auto-Detection
+                    </h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Add the bot to your group and give it permission to read messages. It will automatically catch
+                        any message containing <code class="bg-slate-800 px-1 py-0.5 rounded">```mermaid</code> blocks.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <span
+                            class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-sm mr-3">2</span>
+                        Manual Commands
+                    </h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Use the <code class="bg-slate-800 px-1 py-0.5 rounded">/mermaid</code> command for quick
+                        rendering. Perfect for one-off diagrams or private chats with the bot.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started / Installation -->
+    <section id="getting-started" class="py-24 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center">Host Your Own</h2>
+
+            <div class="space-y-6">
+                <div class="glass-card rounded-2xl p-6">
+                    <h4 class="font-bold mb-4 flex items-center">
+                        <i class="fab fa-docker mr-2 text-sky-400"></i> Docker Installation
+                    </h4>
+                    <pre
+                        class="bg-slate-950 p-4 rounded-xl font-mono text-sm text-sky-300 overflow-x-auto">docker run -e TELEGRAM__TOKEN=your_token_here ghcr.io/capcom6/mergram-tg-bot:latest</pre>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6">
+                    <h4 class="font-bold mb-4 flex items-center">
+                        <i class="fab fa-golang mr-2 text-cyan-400"></i> Build from Source
+                    </h4>
+                    <div class="space-y-2">
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-widest mb-2">Step 1: Clone</p>
+                        <pre
+                            class="bg-slate-950 p-4 rounded-xl font-mono text-sm text-sky-300 overflow-x-auto mb-4">git clone https://github.com/capcom6/mergram-tg-bot.git</pre>
+
+                        <p class="text-xs text-gray-500 uppercase font-bold tracking-widest mb-2">Step 2: Install & Run
+                        </p>
+                        <pre class="bg-slate-950 p-4 rounded-xl font-mono text-sm text-sky-300 overflow-x-auto">make deps
+make air</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Built With -->
+    <section class="py-20 px-4 border-t border-white/5">
+        <div class="max-w-7xl mx-auto text-center">
+            <h3 class="text-sm font-bold text-gray-500 uppercase tracking-[0.2em] mb-12">Built with Industry Standards
+            </h3>
+            <div
+                class="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition duration-500">
+                <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go">
+                <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white"
+                    alt="Telegram">
+                <img src="https://img.shields.io/badge/Mermaid-FF3670?style=for-the-badge&logo=mermaid&logoColor=white"
+                    alt="Mermaid">
+                <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"
+                    alt="Docker">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 px-4 bg-slate-950 border-t border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-8 md:mb-0">
+                <div class="flex items-center space-x-3 mb-4">
+                    <img src="assets/logo.jpg" alt="MerGram Logo" class="w-8 h-8 rounded-full">
+                    <span class="text-xl font-bold tracking-tight">MerGram</span>
+                </div>
+                <p class="text-gray-500 text-sm">
+                    Empowering technical communication in Telegram.
+                </p>
+            </div>
+
+            <div class="flex space-x-12">
+                <div>
+                    <h5 class="font-bold mb-4 text-xs uppercase tracking-widest text-sky-500">Links</h5>
+                    <ul class="text-sm space-y-2 text-gray-400">
+                        <li><a href="https://t.me/MerGramBot" target="_blank" rel="noopener noreferrer"
+                                class="hover:text-white transition">Try the Bot</a></li>
+                        <li><a href="https://github.com/capcom6/mergram-tg-bot" target="_blank"
+                                rel="noopener noreferrer" class="hover:text-white transition">GitHub Repository</a></li>
+                        <li><a href="https://mergram.dev" target="_blank" rel="noopener noreferrer"
+                                class="hover:text-white transition">Website</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-4 text-xs uppercase tracking-widest text-pink-500">Maintainer</h5>
+                    <ul class="text-sm space-y-2 text-gray-400">
+                        <li><a href="https://github.com/capcom6" target="_blank" rel="noopener noreferrer"
+                                class="hover:text-white transition">Capcom6</a></li>
+                        <li><a href="https://github.com/capcom6/mergram-tg-bot/issues" target="_blank"
+                                rel="noopener noreferrer" class="hover:text-white transition">Report Bug</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 text-center text-xs text-gray-600">
+            <p class="mb-2 uppercase tracking-widest font-bold text-gray-700">Service Disclaimer</p>
+            <p class="mb-4 max-w-xl mx-auto">
+                MerGram currently utilizes <a href="https://mermaid.ink" target="_blank" rel="noopener noreferrer"
+                    class="underline">mermaid.ink</a> as its
+                backend rendering service. By using this bot, your Mermaid diagram syntax is sent to their servers to
+                generate the final image output.
+            </p>
+            &copy; 2024 MerGram Project. Distributed under Apache License 2.0.
+        </div>
+    </footer>
+
+</body>
+
+</html>
