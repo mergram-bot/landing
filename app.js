@@ -38,6 +38,13 @@ input.addEventListener('input', () => {
 window.addEventListener('DOMContentLoaded', () => {
     renderDiagram();
 
+    // Set current year in footer copyright
+    const currentYear = new Date().getFullYear();
+    const yearElement = document.getElementById('current-year');
+    if (yearElement) {
+        yearElement.textContent = currentYear;
+    }
+
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
